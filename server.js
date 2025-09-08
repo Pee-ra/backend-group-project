@@ -4,22 +4,23 @@ import dotenv from "dotenv";
 
 import { connectMongo } from "./config/mongo.js";
 import usersRoutes from "./api/v1/users.js";
-// import cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";
 
 
 dotenv.config();
 const app = express();
 //Middleware
 app.use(express.json());
-
+app.use(cookieParser()); 
 const corsOptions = {
   origin: [
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:5175",
-  ], // frontend domain
+  ],
+  credentials: true, // frontend domain
 };
-app.use(cors(corsOptions)); //CORSoPTION
+app.use(cors(corsOptions),); //CORSoPTION
 app.use("/", usersRoutes);
 
 
