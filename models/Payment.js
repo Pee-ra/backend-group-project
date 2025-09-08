@@ -1,12 +1,19 @@
 import { Schema, model } from "mongoose";
 
 const Payment = new Schema({
-  userId: { type: String, required: true },
-  orderId: { type: String, required: true },
-  createOn: { type: Date, default: new Date().getTime() },
-  service: { type: String, required: true },
-  items: { type: [String], required: [] },
-  amout: { type: Number, required: true },
+  orderId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "Order", // อ้างอิงถึง Collection ของคำสั่งซื้อ
+  },
+  createOn: {
+    type: Date,
+    default: Date.now,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
 });
 
 export const payment = model("payment", Payment);

@@ -1,48 +1,54 @@
 import { Order } from "../../../models/MyOrder.js";
 
-// get
+// get all order
 export const getAllOrder = async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1, isPinned: -1 });
-    return res.json({
-      error: false,
-      orders,
-      message: "All order retrived succesfully",
-    });
-  } catch (err) {
-    return res.status(500).json({
-      error: true,
-      message: "Failed to fetch all orders",
-      detail: err.message,
+    const { userId } = req.params;
+    const orders = await Order.find({ userId: userId }).sort({ createdOn: -1 });
+    if (!orders.length) {
+      return res
+        .status(404)
+        .json({ message: "ไม่พบคำสั่งซื้อสำหรับผู้ใช้รายนี้" });
+    }
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำสั่งซื้อ",
+      error: error.message,
     });
   }
 };
 
 // Delete
 export const deleteOrder = async (req, res) => {
-  const orderId = req.params.orderId;
-  const { order } = req.order;
-
   try {
-    const order = await Order.findOne({ _id: orderId, orderId: order._id });
+    const orderId = req.params.orderId;
+    const order = await Order.findById(orderId);
 
     if (!order) {
       return res.status(404).json({
         error: true,
-        message: "Order not found",
+        message: "ไม่พบคำสั่งซื้อที่ต้องการลบ",
       });
     }
 
-    await Order.deleteOne({ _id: orderId, orderId: order._id });
+    const result = await Order.deleteOne({ _id: orderId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        error: true,
+        message: "คำสั้่งซื้อถูกลบไปแล้ว",
+      });
+    }
 
-    return res.json({
+    return res.status(200).json({
       error: false,
-      message: "Order deleted successfully",
+      message: "ลบคำสั่งซื้อสำเร็จแล้ว",
     });
   } catch (err) {
     return res.status(500).json({
       error: true,
-      message: "Internal Server Error",
+      message: "เกิดข้อผิดพลาดในการลบคำสั่งซื้อ",
+      detail: err.message,
     });
   }
 };
@@ -50,27 +56,43 @@ export const deleteOrder = async (req, res) => {
 //search
 export const searchOrder = async (req, res) => {
   try {
+    const { userId, query } = req.query;
+    if (!userId || !query) {
+      return res.status(400).json({
+        error: true,
+        message: "กรุณาระบุ User ID และคำค้นหา",
+      });
+    }
+
+    const searchRegex = new RegExp(query, "i");
     const matchingOrder = await Order.find({
-      userId: user._id,
+      userId: userId,
       $or: [
-        { service: { $regex: new RegExp(Query, "i") } },
-        { items: { $regex: new RegExp(Query, "i") } },
-        { pickupDate: { $regex: new RegExp(Query, "i") } },
-        { amout: { $regex: new RegExp(Query, "i") } },
+        { "orderId" : { $regex: searchRegex }},
+        { "services.serviceType": { $regex: searchRegex} },
+        { "items.name": { $regex: searchRegex } },
+        { "notes": { $regex: searchRegex } },
+        { "pickupDate": { $regex: searchRegex} },
+        { amount: parseInt(query) || null },
       ],
     });
+
+    if (matchingOrder.length === 0){
+      return res.status(404).json({
+        message:"ไม่พบคำสั่งซื้อที่ตรงกับคำค้นหา"
+      })
+    }
 
     return res.json({
       error: false,
       order: matchingOrder,
-      message: "Order matching the search query retrived successfully",
+      message: "ค้นหาสำเร็จ",
     });
   } catch (error) {
     return res.status(500).json({
       error: true,
-      message: "Internal Server error",
+      message: "เกิดข้อผิดพลาดในการค้นหา",
+      detail: error.message,
     });
   }
 };
-
-//Get order by id ??
