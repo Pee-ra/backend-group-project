@@ -1,5 +1,7 @@
 node_modules
 http-tests
+rest
 
 .DS_Store
 .env
+
