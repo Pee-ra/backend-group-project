@@ -113,11 +113,12 @@ router.get("/verify", async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-
+    const user = await User.findById(decoded.userId).select("_id fullName email tel roomNumber");
     res.status(200).json({
       error: false,
       userId: decoded.userId,
       message: "Token is valid ✅",
+      user: user,
     });
   } catch (err) {
     next(err);
@@ -137,6 +138,26 @@ router.post("/logout", (req, res) => {
   res.status(200).json({ message: "Logged out successfully 👋" });
 });
 
+router.put("/users/:id", async (req, res, next) =>{
+  const userId = req.params.id; //ดึง id ของuser จาก urlมาเก็บใน userId
+  console.log(userId);
+  const { fullName, email, tel, roomNumber } = req.body; //ใช้ข้อมูลจาก frontend ที่พิมพ์ใหม่แล้วใส่ลงด้านล่าง
 
+  try {
+    const user = await User.findById(userId); //หาใน db ด้วย id มีตรงไหม
+    if (!user) {
+      return res.status(404).json({ error: true, message: "User not found!" });
+    }
+    user.fullName = fullName;
+    user.email = email;
+    user.tel = tel;
+    user.roomNumber = roomNumber;
+    await user.save();
+    console.log(user);
+    res.status(200).json({ error: false, message: "User updated successfully!" });
+  } catch (err) {
+    next(err);
+  }
+})
 
 export default router;
