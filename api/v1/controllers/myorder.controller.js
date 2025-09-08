@@ -1,10 +1,28 @@
 import { Order } from "../../../models/MyOrder.js";
 
-// get all order
-export const getAllOrder = async (req, res) => {
+// POST create order from service
+export const createOrder = async (req, res) => {
+  try {
+    const newOrder = await Order.create(req.body);
+    return res.status(201).json({
+      error: false,
+      newOrder,
+      message: "สร้างคำสั่งซื้อสำเร็จ",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      message: "เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ",
+      detial: err.message,
+    });
+  }
+};
+
+// get all myorder
+export const getMyOrder = async (req, res) => {
   try {
     const { userId } = req.params;
-    const orders = await Order.find({ userId: userId }).sort({ createdOn: -1 });
+    const orders = await Order.find({ userId: userId }).sort({ createOn: -1 });
     if (!orders.length) {
       return res
         .status(404)
@@ -53,7 +71,7 @@ export const deleteOrder = async (req, res) => {
   }
 };
 
-//search
+// search
 export const searchOrder = async (req, res) => {
   try {
     const { userId, query } = req.query;
@@ -68,19 +86,18 @@ export const searchOrder = async (req, res) => {
     const matchingOrder = await Order.find({
       userId: userId,
       $or: [
-        { "orderId" : { $regex: searchRegex }},
-        { "services.serviceType": { $regex: searchRegex} },
+        { "_Id": { $regex: searchRegex } },
+        { "services.serviceType": { $regex: searchRegex } },
         { "items.name": { $regex: searchRegex } },
         { "notes": { $regex: searchRegex } },
-        { "pickupDate": { $regex: searchRegex} },
-        { amount: parseInt(query) || null },
+        { "amount": parseInt(query) || null },
       ],
     });
 
-    if (matchingOrder.length === 0){
+    if (matchingOrder.length === 0) {
       return res.status(404).json({
-        message:"ไม่พบคำสั่งซื้อที่ตรงกับคำค้นหา"
-      })
+        message: "ไม่พบคำสั่งซื้อที่ตรงกับคำค้นหา",
+      });
     }
 
     return res.json({
