@@ -68,7 +68,7 @@ router.post("/login", async (req, res, next) => {
     }
 
     //Generate JWT (token) 1 hour
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -89,7 +89,8 @@ router.post("/login", async (req, res, next) => {
         fullName: user.fullName,
         email: user.email,
         tel: user.tel,
-        roomNumber: user.roomNumber
+        roomNumber: user.roomNumber,
+        role: user.role
       },
     });
   } catch (err) {
@@ -113,7 +114,7 @@ router.get("/verify", async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-    const user = await User.findById(decoded.userId).select("_id fullName email tel roomNumber");
+    const user = await User.findById(decoded.userId).select("_id fullName email tel roomNumber role");
     res.status(200).json({
       error: false,
       userId: decoded.userId,
@@ -159,5 +160,72 @@ router.put("/users/:id", async (req, res, next) =>{
     next(err);
   }
 })
+
+// admin login
+router.post("/admin/login", async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: true,
+      message: "email and password are requried",
+    });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user.role !== "admin") {
+      return res.status(401).json({
+        error: true,
+        message: "Invalid credentials!",
+      });
+    }
+
+    if (!user) {
+      return res.status(401).json({
+        error: true,
+        message: "Invalid credentials!",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);  //เช็ค password ที่ส่งมา กับ password ที่เก็บไว้ใน db
+    if (!isMatch) {
+      return res.status(401).json({
+        error: true,
+        message: "Invalid credentials!",
+      });
+    }
+
+    //Generate JWT (token) 1 hour
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    const isProd = process.env.NODE_ENV === "production"; //ตัวแปร environment บนrender เช็คว่าตั้งไว้เปน production หรือไม่
+    res.cookie("accessToken", token, {  //เก็บ token ไว้ใน cookie ชื่อcookieว่า accessToken
+      httpOnly: true,  //ส่งcookieไปกับ http reqเท่านั้น
+      secure: isProd,  //บังคับให้ใช้ https
+      sameSite: isProd ? "none" : "lax",
+      path: "/",
+      maxAge: 60 * 60 * 1000, //1 hour cookie
+    });
+
+    res.status(200).json({
+      error: false,
+      message: "Login successful!",
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        tel: user.tel,
+        roomNumber: user.roomNumber,
+        role: user.role
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;
