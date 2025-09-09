@@ -141,7 +141,7 @@ router.post("/logout", (req, res) => {
 
 router.put("/users/:id", async (req, res, next) =>{
   const userId = req.params.id; //ดึง id ของuser จาก urlมาเก็บใน userId
-  console.log(userId);
+  // console.log(userId);
   const { fullName, email, tel, roomNumber } = req.body; //ใช้ข้อมูลจาก frontend ที่พิมพ์ใหม่แล้วใส่ลงด้านล่าง
 
   try {

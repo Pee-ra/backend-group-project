@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { User } from "../models/User.js";
 
 
 export const authUser = (requireRole = null) => {
@@ -14,6 +15,11 @@ export const authUser = (requireRole = null) => {
     
     try {
         const decoded_token = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await User.findById(decoded.userId).select("_id email role");
+        if (!user) {
+        return res.status(401).json({ error: true, message: "User not found" });
+        }
 
         req.user = {_id: decoded_token.userId, role: decoded_token.role};
 

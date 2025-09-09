@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import { connectMongo } from "./config/mongo.js";
 import usersRoutes from "./api/v1/users.js";
 import cookieParser from "cookie-parser";
+import adminRoutes from "./api/v1/admin.js";
+
+
 
 
 dotenv.config();
@@ -22,6 +25,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions),); //CORSoPTION
 app.use("/", usersRoutes);
+app.use("/adminPage", adminRoutes);
 
 
 
