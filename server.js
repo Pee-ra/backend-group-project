@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 //Middleware
 app.use(express.json());
-app.use(cookieParser()); 
+app.use(cookieParser());
 const corsOptions = {
   origin: [
     "http://localhost:5173",
