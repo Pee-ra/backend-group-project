@@ -14,7 +14,7 @@ Content-Type: application/json
   ],
   "items": [
     {
-      "name": "เสื้อเชิ๊ต",
+      "name": "เสื้อเชิ๊ต2",
       "quantity": 3,
       "price": 25
     },
@@ -33,7 +33,7 @@ Content-Type: application/json
 GET http://localhost:5001/orders/68baa248830dbbb1ce463ce0
 
 ### Delete
-DELETE http://localhost:5001/orders/68bf1e68c78a5b8016a6daa1
+DELETE http://localhost:5001/orders/68bf97b8b171c4dbc942a0d1
 
 ### Search
 GET http://localhost:5001/orders/search?userId=68baa248830dbbb1ce463ce0&query=กางเกงขายาว
