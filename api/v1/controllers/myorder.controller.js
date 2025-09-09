@@ -86,11 +86,11 @@ export const searchOrder = async (req, res) => {
     const matchingOrder = await Order.find({
       userId: userId,
       $or: [
-        { "_Id": { $regex: searchRegex } },
+        { _Id: { $regex: searchRegex } },
         { "services.serviceType": { $regex: searchRegex } },
         { "items.name": { $regex: searchRegex } },
-        { "notes": { $regex: searchRegex } },
-        { "amount": parseInt(query) || null },
+        { notes: { $regex: searchRegex } },
+        { amount: parseInt(query) || null },
       ],
     });
 
@@ -110,6 +110,39 @@ export const searchOrder = async (req, res) => {
       error: true,
       message: "เกิดข้อผิดพลาดในการค้นหา",
       detail: error.message,
+    });
+  }
+};
+
+// Edit
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { orderStatus } = req.body;
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { orderStatus: orderStatus },
+      { new: true }
+    );
+
+    if(!updatedOrder){
+      return res.status(404).json({
+        message:"ไม่พบคำสั่งซื้อที่ต้องการอัปเดต"
+      })
+    }
+
+    res.status(200).json({
+      updatedOrder,
+      message:"อัพเดทสถานะสำเร็จ",
+    })
+
+
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      message: "เกิดข้อผิดพลาดในการแก้ไขสถานะ",
+      detail: err.message,
     });
   }
 };

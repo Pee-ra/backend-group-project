@@ -1,0 +1,5 @@
+### Post
+POST http://
+
+### Get
+GET  http://localhost:5001/payment/68bf1af3dc21bbbbefff9254

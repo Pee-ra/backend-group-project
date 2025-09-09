@@ -37,3 +37,11 @@ DELETE http://localhost:5001/orders/68bf97b8b171c4dbc942a0d1
 
 ### Search
 GET http://localhost:5001/orders/search?userId=68baa248830dbbb1ce463ce0&query=กางเกงขายาว
+
+### Edit status
+PUT http://localhost:5001/orders/68bf1af3dc21bbbbefff9254/status
+Content-Type: application/json
+
+{
+    "orderStatus": "Processing"
+}

@@ -1,4 +1,4 @@
-import { Schema, Types, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const OrderSchema = new Schema({
   userId: {
@@ -60,6 +60,21 @@ const OrderSchema = new Schema({
   },
   deliveryDate: {
     type: Date,
+  },
+  review: {
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+    },
+    comment: {
+      type: String,
+      maxlength: 500,
+    },
+    reviewedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
 });
 

@@ -1,6 +1,7 @@
-import { Order } from "../../../models/MyOrder";
-import { payment } from "../../../models/Payment";
+import { Order } from "../../../models/MyOrder.js";
+import { payment } from "../../../models/Payment.js";
 
+// Create payment
 export const cretePayment = async (req, res) => {
   try {
     const { orderId } = req.body;
@@ -30,6 +31,28 @@ export const cretePayment = async (req, res) => {
       error: true,
       message: "เกิดข้อผิดพลาดในการสร้างรายการชำระเงิน",
       detail: err.message,
+    });
+  }
+};
+
+//
+export const myPayment = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const payMent = await payment.findOne({ orderId: orderId });
+    if (!payMent) {
+      return res.status(404).json({ message: "ไม่พบข้อมูลการคำสั่งซื้อนี้" });
+    }
+    res.status(200).json({
+      error: false,
+      payMent,
+      message: "ดึงข้อมูลคำสั่งซื้อสำเร็จ",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: true,
+      message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำสั่งซื้อ",
     });
   }
 };
