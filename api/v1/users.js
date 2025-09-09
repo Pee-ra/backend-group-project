@@ -65,7 +65,7 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    //Generate JWT (token)
+    //Generate JWT (token) 1 hour
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -98,7 +98,9 @@ router.post("/login", async (req, res, next) => {
 //verify user
 // Verify token
 router.get("/verify", async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1]; //ไปหา token ใน header หน้าตา Authorization: Bearer <JWT_TOKEN>
+  // const token = req.headers.authorization.split(" ")[1]; //ไปหา token ใน header หน้าตา Authorization: Bearer <JWT_TOKEN>
+  const bearer = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies?.accessToken || bearer;
 
   if (!token) {
     return res.status(401).json({
@@ -109,11 +111,12 @@ router.get("/verify", async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-
+    const user = await User.findById(decoded.userId).select("_id fullName email tel roomNumber");
     res.status(200).json({
       error: false,
       userId: decoded.userId,
       message: "Token is valid ✅",
+      user: user,
     });
   } catch (err) {
     next(err);
@@ -123,17 +126,36 @@ router.get("/verify", async (req, res, next) => {
 // Logout
 // At User Browser
 router.post("/logout", (req, res) => {
-  res.clearCookie("accessToken", {  //ลบ cookie ที่ชื่อ accessToken
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
-  });
-
-  res.status(200).json({
-    message: "Logged out successfully 👋",
-  });
+  const isProd = process.env.NODE_ENV === "production";
+  res.clearCookie("accessToken", {
+  httpOnly: true,
+  secure: true,  // dev
+  sameSite: "lax",
+  path: "/",
+});
+  res.status(200).json({ message: "Logged out successfully 👋" });
 });
 
+router.put("/users/:id", async (req, res, next) =>{
+  const userId = req.params.id; //ดึง id ของuser จาก urlมาเก็บใน userId
+  console.log(userId);
+  const { fullName, email, tel, roomNumber } = req.body; //ใช้ข้อมูลจาก frontend ที่พิมพ์ใหม่แล้วใส่ลงด้านล่าง
 
+  try {
+    const user = await User.findById(userId); //หาใน db ด้วย id มีตรงไหม
+    if (!user) {
+      return res.status(404).json({ error: true, message: "User not found!" });
+    }
+    user.fullName = fullName;
+    user.email = email;
+    user.tel = tel;
+    user.roomNumber = roomNumber;
+    await user.save();
+    console.log(user);
+    res.status(200).json({ error: false, message: "User updated successfully!" });
+  } catch (err) {
+    next(err);
+  }
+})
 
 export default router;
