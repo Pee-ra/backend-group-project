@@ -3,30 +3,21 @@ POST http://localhost:5001/orders
 Content-Type: application/json
 
 {
-  "userId": "68baa248830dbbb1ce463ce0",
-  "services": [
-    {
-      "serviceType": "ตามชิ้น",
-      "details": {
-        "description": "คำสั่งซื้อตามชิ้นทั่วไป"
-      }
-    }
-  ],
-  "items": [
-    {
-      "name": "เสื้อเชิ๊ต2",
-      "quantity": 3,
-      "price": 25
-    },
-    {
-      "name": "กางเกงขายาว2",
-      "quantity": 1,
-      "price": 50
-    }
-  ],
-  "notes": "ไม่ใช้สารฟอกขาว",
-  "amount": 150,
-  "pickupDate": "2025-09-10T10:00:00Z"
+  "user_id": "y64152fwse54s12dhyq5r", 
+  "order_date": "2025-03-09",
+  "service_id": " 51e2dstw5rds52sdy",
+  "service_items" : [
+  { item_id:"2341345fsgh", quantity:1 },
+  { item_id:"123456fsgh", quantity:1 },
+  { item_id:"35799fsgh", quantity:1 },
+  ]
+  "pickup_date": "2025-03-09",
+  "pickup_time": "12.00-13.00",
+  "note": "รบกวนไม่ใส่ไฮเตอร์ผ้าขาว",
+  "order_status": "pending",
+  "payment_status": "success",
+  "delivery_date": "2025-03-10",
+  "order_amount": 500,
 }
 
 ### Get

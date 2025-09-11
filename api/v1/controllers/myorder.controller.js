@@ -126,18 +126,16 @@ export const updateOrderStatus = async (req, res) => {
       { new: true }
     );
 
-    if(!updatedOrder){
+    if (!updatedOrder) {
       return res.status(404).json({
-        message:"ไม่พบคำสั่งซื้อที่ต้องการอัปเดต"
-      })
+        message: "ไม่พบคำสั่งซื้อที่ต้องการอัปเดต",
+      });
     }
 
     res.status(200).json({
       updatedOrder,
-      message:"อัพเดทสถานะสำเร็จ",
-    })
-
-
+      message: "อัพเดทสถานะสำเร็จ",
+    });
   } catch (err) {
     return res.status(500).json({
       error: true,

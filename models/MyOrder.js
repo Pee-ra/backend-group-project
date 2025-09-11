@@ -6,60 +6,54 @@ const OrderSchema = new Schema({
     ref: "User", // อ้างอิงถึงคอลเลกชัน 'User'
     required: true,
   },
-  orderId: {
-    type: Schema.Types.ObjectId,
-    // 'ref' ใช้สำหรับอ้างอิงเอกสารจาก collection อื่น
-    ref: "Payment",
-  },
   createOn: {
     type: Date,
     default: Date.now,
   },
-  orderStatus: {
-    type: String,
-    enum: ["Pending", "Processing", "Delivered", "Cancelled"],
-    default: "Pending",
+  services_id: {
+    type: Schema.Types.ObjectId,
+    ref: "service",
+    required: true,
   },
-  services: [
+  service_items: [
     {
-      serviceType: {
-        type: String,
-        enum: ["เหมาถัง", "ตามชิ้น"],
-        required: true,
-      },
-      // 'Mixed' ใช้สำหรับเก็บข้อมูลที่มีโครงสร้างยืดหยุ่น เช่น ขนาดของถัง
-      details: Schema.Types.Mixed,
-    },
-  ],
-  items: [
-    {
-      name: {
-        type: String,
+      items_id: {
+        type: Schema.Types.ObjectId,
+        ref: "items",
         required: true,
       },
       quantity: {
         type: Number,
         required: true,
-      },
-      // เพิ่มฟิลด์ price (ราคา) เข้าไปในแต่ละรายการของ
-      price: {
-        type: Number,
-        required: true,
+        min:1,
       },
     },
   ],
+  pickup_date: {
+    type: Date,
+  },
+  pickup_time: {
+    type: String,
+  },
   notes: {
     type: String,
+  },
+  order_status: {
+    type: String,
+    enum: ["Pending", "Processing", "Delivered", "Cancelled"],
+    default: "Pending",
   },
   amount: {
     type: Number,
     required: true,
   },
-  pickupDate: {
+  delivery_date: {
     type: Date,
   },
-  deliveryDate: {
-    type: Date,
+  payment_status:{
+    type: String,
+    enum: ["Pending", "Paid", "Failed", "Refunded"],
+    default: "Pending"
   },
   review: {
     rating: {
