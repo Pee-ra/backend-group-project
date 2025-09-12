@@ -20,6 +20,7 @@ const corsOptions = {
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:5175",
+    "https://sprint2-project3-v2.vercel.app/"
   ],
   credentials: true, // frontend domain
 };
