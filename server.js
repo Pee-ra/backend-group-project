@@ -13,6 +13,7 @@ import adminRoutes from "./api/v1/admin.js";
 dotenv.config();
 const app = express();
 //Middleware
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(cookieParser()); 
 const corsOptions = {
