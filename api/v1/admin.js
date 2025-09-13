@@ -1,10 +1,11 @@
 import express from "express";
 import { User } from "../../models/User.js";
+import { authUser } from "../../middleware/authUser.js";
 
 const routerAdmin = express.Router();
 
 // ดึงผู้ใช้
-routerAdmin.get("/users", async (req, res, next) => {
+routerAdmin.get("/users", authUser("admin"), async (req, res, next) => {
   try {
     const users = await User.find().select("_id fullName email tel roomNumber role createdOn");
     res.status(200).json({
@@ -18,7 +19,7 @@ routerAdmin.get("/users", async (req, res, next) => {
 });
 
 // edit role
-routerAdmin.put("/users/:id", async (req, res, next) => {
+routerAdmin.put("/users/:id", authUser("admin"), async (req, res, next) => {
   try {
     const { id } = req.params;
     const { role } = req.body;

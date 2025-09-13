@@ -2,6 +2,7 @@ import express from "express";
 import { User } from "../../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { authUser } from "../../middleware/authUser.js";
 
 const router = express.Router();
 
@@ -130,21 +131,20 @@ router.get("/verify", async (req, res, next) => {
 // At User Browser
 router.post("/logout", (req, res) => {
   const isProd = process.env.NODE_ENV === "production";
-  res.clearCookie("accessToken", {
-  httpOnly: true,
-  secure: true,  // dev
-  sameSite: "lax",
-  path: "/",
-});
+  const cookieOpts = { httpOnly: true, secure: isProd, sameSite: isProd ? "none" : "lax", path: "/" };
+  res.clearCookie("accessToken", cookieOpts);
   res.status(200).json({ message: "Logged out successfully 👋" });
 });
 
-router.put("/users/:id", async (req, res, next) =>{
+router.put("/users/:id", authUser(), async (req, res, next) =>{
   const userId = req.params.id; //ดึง id ของuser จาก urlมาเก็บใน userId
   // console.log(userId);
   const { fullName, email, tel, roomNumber } = req.body; //ใช้ข้อมูลจาก frontend ที่พิมพ์ใหม่แล้วใส่ลงด้านล่าง
 
   try {
+    if (req.user._id !== userId) {
+      return res.status(403).json({ error: true, message: "Forbidden: self-update only" });
+    }
     const user = await User.findById(userId); //หาใน db ด้วย id มีตรงไหม
     if (!user) {
       return res.status(404).json({ error: true, message: "User not found!" });
@@ -174,20 +174,12 @@ router.post("/admin/login", async (req, res, next) => {
 
   try {
     const user = await User.findOne({ email });
-
-    if (user.role !== "admin") {
-      return res.status(401).json({
-        error: true,
-        message: "Invalid credentials!",
-      });
-    }
-
-    if (!user) {
-      return res.status(401).json({
-        error: true,
-        message: "Invalid credentials!",
-      });
-    }
+if (!user) {
+  return res.status(401).json({ error: true, message: "Invalid credentials!" });
+}
+if (user.role !== "admin") {
+  return res.status(401).json({ error: true, message: "Invalid credentials!" });
+}
 
     const isMatch = await bcrypt.compare(password, user.password);  //เช็ค password ที่ส่งมา กับ password ที่เก็บไว้ใน db
     if (!isMatch) {
