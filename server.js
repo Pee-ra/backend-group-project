@@ -9,10 +9,15 @@ import paymentRoutes from "./api/v1/routes/payment.route.js";
 import servicesRoutes from "./api/v1/services.js"
 import itemsRouted from "./api/v1/items.js";
 import cookieParser from "cookie-parser";
+import adminRoutes from "./api/v1/admin.js";
+
+
+
 
 dotenv.config();
 const app = express();
 //Middleware
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(cookieParser());
 const corsOptions = {
@@ -20,11 +25,13 @@ const corsOptions = {
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:5175",
+    "https://sprint2-project3-v2.vercel.app"
   ],
   credentials: true, // frontend domain
 };
 app.use(cors(corsOptions)); //CORSoPTION
 app.use("/", usersRoutes);
+app.use("/adminPage", adminRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/services", servicesRoutes);
@@ -45,7 +52,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = process.env.port || 5001;
+const port = process.env.PORT || 5001;
+
+
 
 (async () => {
   try {

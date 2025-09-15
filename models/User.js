@@ -28,6 +28,11 @@ const UserSchema = new Schema(
             type: Date,
             default: new Date().getTime(),
         },
+        role: {
+            type: String, 
+            enum: ["customer", "admin"], //ค่าต้องเป็น customer หรือ admin
+            default: "customer",
+        }
     }
 );
 
