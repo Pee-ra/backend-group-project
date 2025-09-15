@@ -54,7 +54,7 @@ export const deleteOrder = async (req, res) => {
     if (result.deletedCount === 0) {
       return res.status(404).json({
         error: true,
-        message: "คำสั้่งซื้อถูกลบไปแล้ว",
+        message: "คำสั้่งซื้อถูกลบเรียบร้อยไปแล้ว",
       });
     }
 

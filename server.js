@@ -5,7 +5,9 @@ import dotenv from "dotenv";
 import { connectMongo } from "./config/mongo.js";
 import usersRoutes from "./api/v1/users.js";
 import ordersRoutes from "./api/v1/routes/myorder.route.js";
-import paymentRoutes from "./api/v1/routes/payment.route.js"
+import paymentRoutes from "./api/v1/routes/payment.route.js";
+import servicesRoutes from "./api/v1/services.js"
+import itemsRouted from "./api/v1/items.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -25,6 +27,8 @@ app.use(cors(corsOptions)); //CORSoPTION
 app.use("/", usersRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/services", servicesRoutes);
+app.use("/items", itemsRouted);
 
 app.use((req, res, next) => {
   const error = new Error("Not Found");

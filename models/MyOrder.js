@@ -55,21 +55,6 @@ const OrderSchema = new Schema({
     enum: ["Pending", "Paid", "Failed", "Refunded"],
     default: "Pending"
   },
-  review: {
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5,
-    },
-    comment: {
-      type: String,
-      maxlength: 500,
-    },
-    reviewedAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
 });
 
 export const Order = model("Order", OrderSchema);

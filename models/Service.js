@@ -4,16 +4,12 @@ const ServiceSchema = new Schema(
     {
         service_name: {
             type: String,
+            enum: ["คิดตามน้ำหนัก", "คิดตามรายชิ้น"],
             required: true
         },
-        service_type: {
-            type: String,
-            enum: ["weight", "per_item"],
-            required: true
-        },
-        pricePerKg: {
-            type: Number,
-            default: 0
+        capacity:{
+            type : Number,
+            default : 0,
         },
         perday_limit_order: {
             type: Number,

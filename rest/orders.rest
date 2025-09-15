@@ -3,28 +3,26 @@ POST http://localhost:5001/orders
 Content-Type: application/json
 
 {
-  "user_id": "68baa248830dbbb1ce463ce0" ,
-  "order_date": "2025-03-09",
-  "service_id": " 51e2dstw5rds52sdy",
+  "userId": "68baa248830dbbb1ce463ce0",
+  "createOn": "2025-03-09",
+  "services_id" : "68c7c3fb6ecad34a124adfc1",
   "service_items" : [
-  { item_id:"2341345fsgh", quantity:1 },
-  { item_id:"123456fsgh", quantity:1 },
-  { item_id:"35799fsgh", quantity:1 },
+    { "items_id":"68c7c4266ecad34a124adfc4", "quantity": 1 }
   ],
   "pickup_date": "2025-03-09",
   "pickup_time": "12.00-13.00",
-  "note": "รบกวนไม่ใส่ไฮเตอร์ผ้าขาว",
-  "order_status": "pending",
-  "payment_status": "success",
+  "notes": "รบกวนไม่ใส่ผงซักฟอกขาว",
+  "order_status": "Pending",
+  "amount": 500,
   "delivery_date": "2025-03-10",
-  "order_amount": 500,
+  "payment_status": "Paid"
 }
 
 ### Get
 GET http://localhost:5001/orders/68baa248830dbbb1ce463ce0
 
 ### Delete
-DELETE http://localhost:5001/orders/68bf97b8b171c4dbc942a0d1
+DELETE http://localhost:5001/orders/68c7ca8cd0569f77ccfdb035
 
 ### Search
 GET http://localhost:5001/orders/search?userId=68baa248830dbbb1ce463ce0&query=กางเกงขายาว
