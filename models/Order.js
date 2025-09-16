@@ -10,7 +10,7 @@ const orderSchema = new Schema(
     },
     serviceType: {
       type: String,
-      enum: ["per-kg", "per-piece"],
+      enum: ["คิดตามน้ำหนัก", "คิดตามชิ้น"],
       required: true,
     },
     weightDetails: {
