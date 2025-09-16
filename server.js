@@ -6,7 +6,7 @@ import { connectMongo } from "./config/mongo.js";
 import usersRoutes from "./api/v1/users.js";
 import cookieParser from "cookie-parser";
 import adminRoutes from "./api/v1/admin.js";
-
+import orderRoutes from "./routes/orderRoutes.js";
 
 
 
@@ -28,7 +28,7 @@ const corsOptions = {
 app.use(cors(corsOptions),); //CORSoPTION
 app.use("/", usersRoutes);
 app.use("/adminPage", adminRoutes);
-
+app.use("/api/v1/orders", orderRoutes);
 
 
 app.use((req, res, next) => {
