@@ -35,6 +35,38 @@ export const getMyOrders = async (req, res, next) => {
   }
 };
 
+/**
+ * GET /api/v1/orders/:id
+ * ดึงข้อมูลคำสั่งซื้อเดียวตาม _id หรือ orderNumber
+ */
+export const getOrderById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // ลองหาด้วย _id หรือ orderNumber (รองรับทั้งสองแบบ)
+    const order = await Order.findOne({
+      $or: [{ _id: id }, { orderNumber: id }],
+    })
+      .populate("user", "fullName email")
+      .lean();
+
+    if (!order) {
+      return res.status(404).json({
+        error: true,
+        message: "ไม่พบคำสั่งซื้อนี้",
+      });
+    }
+
+    res.status(200).json({
+      error: false,
+      message: "ดึงข้อมูลคำสั่งซื้อสำเร็จ",
+      order,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 // delete my order
 

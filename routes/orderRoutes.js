@@ -1,7 +1,8 @@
 import express from "express";
-import { createOrder, getMyOrders } from "../controllers/orderController.js";
+import { createOrder, getMyOrders, getOrderById } from "../controllers/orderController.js";
 import { authUser } from "../middleware/authUser.js";
 import { cancelMyOrder } from "../controllers/orderController.js";
+ 
 
 const router = express.Router();
 
@@ -9,6 +10,7 @@ const router = express.Router();
 router.post("/", authUser(), createOrder);
 router.get("/me", authUser(), getMyOrders);
 router.delete("/me/:id", authUser(), cancelMyOrder);
+router.get("/:id", authUser(), getOrderById);
 
 export default router;
 
