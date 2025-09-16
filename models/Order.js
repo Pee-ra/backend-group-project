@@ -10,7 +10,7 @@ const orderSchema = new Schema(
     },
     serviceType: {
       type: String,
-      enum: ["per-kg", "per-piece"],
+      enum: ["per-kg", "per-piece", "คิดตามชิ้น", "คิดตามกิโล"],
       required: true,
     },
     weightDetails: {
@@ -25,6 +25,19 @@ const orderSchema = new Schema(
         subtotal: Number,
       },
     ],
+    status: {
+      type: String,
+      enum: ["pending", "completed", "canceled"],
+      default: "pending",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
     pickupDetails: {
       date: { type: Date, required: true },
       time: { type: String, required: true },
