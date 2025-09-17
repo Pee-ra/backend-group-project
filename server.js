@@ -37,6 +37,20 @@ app.use((req, res, next) => {
   next(error);
 })
 
+// ✅ เพิ่ม health route กัน 404 ที่ root และสำหรับ health check
+app.get("/", (_req, res) => {
+  res.status(200).send("OK");
+});
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({ ok: true, time: new Date().toISOString() });
+});
+
+// 404 handler
+app.use((req, res, next) => {
+  const error = new Error("Not Found");
+  error.status = 404;
+  next(error);
+});
 
 // centralized error handling middleware รับมาจาก catch err 
 app.use((err, req, res, next) => {
